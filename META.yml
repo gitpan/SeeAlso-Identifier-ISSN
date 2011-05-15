@@ -1,0 +1,22 @@
+---
+abstract: 'SeeAlso handling of International Standard Serial Numbers'
+author:
+  - 'Thomas Berger C<< <THB@cpan.org> >>'
+configure_requires:
+  Module::Build: 0.36
+generated_by: 'Module::Build version 0.3613'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: SeeAlso-Identifier-ISSN
+provides:
+  SeeAlso::Identifier::ISSN:
+    file: lib/SeeAlso/Identifier/ISSN.pm
+    version: 0.57
+requires:
+  Business::ISSN: 0
+  SeeAlso::Identifier: 0.46
+resources:
+  license: http://dev.perl.org/licenses/
+version: 0.57

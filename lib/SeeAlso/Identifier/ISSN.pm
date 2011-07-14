@@ -5,7 +5,7 @@ use warnings;
 BEGIN {
     use Exporter ();
     use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
-    $VERSION     = '0.57';
+    $VERSION     = '0.5702';
     @ISA         = qw(Exporter);
     #Give a hoot don't pollute, do not export more than needed by default
     @EXPORT      = qw();
@@ -32,21 +32,22 @@ SeeAlso::Identifier::ISSN - SeeAlso handling of International Standard Serial Nu
 
   print "invalid" unless $issn; # $issn is defined but false !
 
-  $issn->value( '1456-5935' );   # set value
   $issn->value;                  # get value
+  $issn->value( '1456-5935' );   # set value
 
   $issn->canonical; # urn:ISSN:1456-5935
   $issn; # ISSN as URI (urn:ISSN:1456-5935)
 
   $issn->pretty; # 1456-5935   (most official form)
 
-  $issn->hash; # long int 0 <= x < 10.000.000 (or "")
-  $issn->hash( 1456593 ); # set by hash
+  $issn->hash; # long int 0 <= x <= 9.999.999 (or "")
+  $issn->hash( 1456593 ); # set by hash value
 
 
 =head1 DESCRIPTION
 
-This module handles International Standard Serial Numbers as identifiers.
+This module handles International Standard Serial Numbers as identifiers
+by letting L<Business::ISSN> do the real work.
 Unlike L<Business::ISSN> the constructor of SeeAlso::Identifier::ISSN 
 always returns an defined identifier with all methods provided by
 L<SeeAlso::Identifier>. 
@@ -61,25 +62,29 @@ Please note that (hashed) 0 is a valid value representing ISSN 0000-0000.
 =head2 parse ( $value )
 
 Get and/or set the value of the ISSN. Returns an empty string or the valid
-ISSN with hyphens as determinded by L<Business::ISSN>. You can also 
+ISSN with hyphens as determined by L<Business::ISSN>. You can also 
 use this method as function.
 
 =cut
 
 sub parse {
-    my $value = shift;
-    $value = shift if ref($value) and scalar @_;
+    local($_) = shift;
+    $_ = shift if ref($_) and scalar @_;
 
-    if (defined $value and not UNIVERSAL::isa( $value, 'Business::ISSN' ) ) {
-        $value =~ s/^urn:ISSN://i;
-        $value = Business::ISSN->new( $value );
+    return '' unless defined $_;
+
+    my $testok;
+    eval { $testok = $_->isa('Business::ISSN'); };
+    unless ( $testok ) {
+        s/^\s+//; s/\s+$//;
+        s/^urn:ISSN://i;
+        s/^ISSN\s*//i;
+        $_ = Business::ISSN->new( $_ );
     }
 
-    return '' unless defined $value;
-
-    return '' unless $value->is_valid;
-
-    return $value->as_string();
+    return '' unless defined $_;
+    return '' unless $_->is_valid;
+    return $_->as_string();
 }
 
 =head2 canonical
@@ -98,7 +103,7 @@ sub canonical {
 
 Returns or sets a space-efficient representation of the ISSN as integer.
 An ISSN always consists of 7 digits plus a check digit/character.
-This makes 10.000.000 possible ISSN which fits in a 32 bit (signed or 
+This makes 10.000.000 possible ISSN which fit in a 32 bit (signed or 
 unsigned) integer value. The integer value is calculated from the ISSN by
 removing the dash and the check digit.
 
@@ -149,8 +154,8 @@ Thomas Berger C<< <THB@cpan.org> >>
 
 =head1 ACKNOWLEDGEMENTS
 
-Jakob Voss C<< <jakob.voss@gbv.de> >> crafted SeeAlso::Identifier::ISBN where
-this one is heavily derived of.
+Jakob Voss C<< <jakob.voss@gbv.de> >> crafted L<SeeAlso::Identifier::ISBN> where
+this one is heavily derived from.
 
 =head1 COPYRIGHT
 

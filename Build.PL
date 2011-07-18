@@ -4,6 +4,9 @@ use Module::Build;
 Module::Build->new
     ( module_name     => 'SeeAlso::Identifier::ISSN',
       license         => 'perl',
+   configure_requires => {
+		Module::Build => 0.35,
+                         },
       requires        => {
 		Business::ISSN      => 0,
 		SeeAlso::Identifier => 0.46,

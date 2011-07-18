@@ -5,7 +5,7 @@ use warnings;
 BEGIN {
     use Exporter ();
     use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
-    $VERSION     = '0.5702';
+    $VERSION     = '0.5703';
     @ISA         = qw(Exporter);
     #Give a hoot don't pollute, do not export more than needed by default
     @EXPORT      = qw();
@@ -76,7 +76,7 @@ sub parse {
     my $testok;
     eval { $testok = $_->isa('Business::ISSN'); };
     unless ( $testok ) {
-        s/^\s+//; s/\s+$//;
+        s/^\s+//; s/\s+$//; s/\s+/ /g;  # normalize-spaces()
         s/^urn:ISSN://i;
         s/^ISSN\s*//i;
         $_ = Business::ISSN->new( $_ );

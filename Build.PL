@@ -8,6 +8,7 @@ Module::Build->new
 		Module::Build => 0.35,
                          },
       requires        => {
+		perl	=> '5.8.2',
 		Business::ISSN      => 0,
 		SeeAlso::Identifier => 0.46,
                          },
